@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Bibbia — Terrazza Duomo 21</title>
+<meta name="theme-color" content="#16202A">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22La%20Bibbia%20%E2%80%94%20Terrazza%20Duomo%2021%22%2C%20%22short_name%22%3A%20%22La%20Bibbia%22%2C%20%22start_url%22%3A%20%22.%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%2316202A%22%2C%20%22theme_color%22%3A%20%22%2316202A%22%2C%20%22orientation%22%3A%20%22portrait%22%7D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --notte:#16202A;
+  --pietra:#1E2A35;
+  --pietra-alta:#26333F;
+  --candoglia:#F2EDE4;
+  --nebbia:#93A1AC;
+  --nebbia-scura:#5E6E7B;
+  --ottone:#C9A46A;
+  --ottone-tenue:#8A7A5C;
+  --bordeaux:#8E3B45;
+  --linea:rgba(201,164,106,.22);
+  --linea-tenue:rgba(242,237,228,.10);
+  --serif:"EB Garamond",Georgia,serif;
+  --grot:"Archivo",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--notte);
+  color:var(--candoglia);
+  font-family:var(--serif);
+  font-size:19px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ottone);outline-offset:3px}
+
+/* ---------- barra ---------- */
+.barra{
+  position:fixed;top:0;left:0;right:0;z-index:40;
+  display:flex;align-items:center;gap:14px;
+  padding:calc(env(safe-area-inset-top) + 11px) 16px 11px;
+  background:rgba(22,32,42,.93);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--linea-tenue);
+}
+.barra__b{width:34px;height:34px;display:grid;place-items:center;flex:0 0 auto;color:var(--nebbia)}
+.barra__b:hover{color:var(--ottone)}
+.barra__b svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round}
+.barra__t{
+  flex:1;min-width:0;font-family:var(--grot);font-size:11.5px;letter-spacing:.09em;
+  color:var(--nebbia);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;
+}
+.barra__t b{color:var(--ottone);font-weight:500}
+
+/* ---------- indice ---------- */
+.velo{position:fixed;inset:0;background:rgba(10,15,20,.6);z-index:45;opacity:0;pointer-events:none;transition:opacity .25s}
+.velo.on{opacity:1;pointer-events:auto}
+.indice{
+  position:fixed;top:0;bottom:0;left:0;width:min(86vw,360px);z-index:50;
+  background:var(--pietra);border-right:1px solid var(--linea);
+  transform:translateX(-101%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;overscroll-behavior:contain;
+  padding:calc(env(safe-area-inset-top) + 26px) 0 40px;
+}
+.indice.on{transform:none}
+.indice__tit{font-family:var(--grot);font-size:10.5px;letter-spacing:.16em;color:var(--nebbia-scura);padding:0 22px 14px}
+.indice__libro{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ottone);padding:22px 22px 6px;border-top:1px solid var(--linea-tenue);margin-top:14px}
+.indice__libro:first-of-type{border-top:0;margin-top:0}
+.indice a{
+  display:flex;gap:12px;align-items:baseline;padding:8px 22px;text-decoration:none;
+  font-size:17px;color:var(--candoglia);opacity:.82;
+}
+.indice a:hover,.indice a.qui{opacity:1;color:var(--ottone);background:rgba(201,164,106,.07)}
+.indice a i{font-family:var(--grot);font-style:normal;font-size:11px;color:var(--nebbia-scura);flex:0 0 22px}
+.indice a.qui i{color:var(--ottone)}
+
+/* ---------- lettura ---------- */
+main{padding:calc(env(safe-area-inset-top) + 56px) 0 90px}
+.foglio{max-width:640px;margin:0 auto;padding:0 24px}
+
+/* frontespizio */
+.front{min-height:calc(100vh - 140px);display:flex;flex-direction:column;justify-content:center;text-align:center;padding:60px 24px}
+.front__casa{font-family:var(--grot);font-size:11px;letter-spacing:.28em;color:var(--ottone);margin-bottom:40px}
+.front__t{font-family:var(--serif);font-size:clamp(48px,15vw,86px);line-height:.94;font-weight:400;margin:0}
+.front__t em{display:block;font-style:italic;color:var(--ottone)}
+.front__r{width:54px;height:1px;background:var(--ottone);margin:34px auto;opacity:.6}
+.front__p{font-style:italic;font-size:20px;line-height:1.55;color:var(--candoglia);opacity:.86;max-width:30ch;margin:0 auto}
+.front__meta{font-family:var(--grot);font-size:10.5px;letter-spacing:.14em;color:var(--nebbia-scura);margin-top:52px}
+.front__giu{margin-top:38px;font-family:var(--grot);font-size:12px;letter-spacing:.1em;color:var(--nebbia)}
+
+/* capitolo */
+.cap__n{font-family:var(--grot);font-size:11px;letter-spacing:.16em;color:var(--ottone);margin:0 0 10px}
+.cap__t{font-family:var(--serif);font-size:clamp(32px,8vw,44px);line-height:1.08;font-weight:400;margin:0 0 8px}
+.cap__s{font-style:italic;color:var(--nebbia);font-size:18px;margin:0 0 4px}
+.cap__r{width:100%;height:1px;background:var(--linea);margin:26px 0 30px}
+
+h3{font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.25;margin:40px 0 12px;color:var(--candoglia)}
+h3:first-child{margin-top:0}
+p{margin:0 0 16px}
+.magro{color:var(--nebbia);font-size:17.5px}
+
+ul.lista,ol.lista{margin:0 0 20px;padding:0;list-style:none}
+ul.lista li,ol.lista li{position:relative;padding-left:26px;margin-bottom:9px}
+ul.lista li::before{content:"";position:absolute;left:6px;top:.72em;width:5px;height:5px;background:var(--ottone);transform:rotate(45deg)}
+ol.lista{counter-reset:o}
+ol.lista li{counter-increment:o}
+ol.lista li::before{content:counter(o);position:absolute;left:0;top:.06em;font-family:var(--grot);font-size:11.5px;color:var(--ottone)}
+
+/* tabella */
+.tab{margin:0 0 24px;border-top:1px solid var(--linea)}
+.riga{display:grid;gap:4px 16px;padding:13px 0;border-bottom:1px solid var(--linea-tenue)}
+.riga.c2{grid-template-columns:1fr 1.45fr}
+.riga.c3{grid-template-columns:1fr 1.2fr 1.2fr}
+.riga.cap-riga{background:none}
+.riga .h{font-family:var(--grot);font-size:10.5px;letter-spacing:.12em;color:var(--nebbia-scura)}
+.riga .k{font-weight:500;color:var(--ottone);font-size:18px}
+.riga .v{font-size:17.5px;color:var(--candoglia);opacity:.9}
+.riga .v.no{color:var(--nebbia)}
+.riga .v.si{color:var(--candoglia)}
+@media(max-width:560px){
+  .riga.c2,.riga.c3{grid-template-columns:1fr}
+  .riga .v+.v{margin-top:2px}
+}
+
+/* evita/prefira */
+.coppia{border-left:2px solid var(--bordeaux);padding:4px 0 4px 16px;margin:0 0 16px}
+.coppia .no{color:var(--nebbia);font-style:italic}
+.coppia .si{color:var(--candoglia);margin-top:4px}
+.coppia .si::before{content:"→ ";color:var(--ottone)}
+
+/* nota */
+.nota{border:1px solid var(--linea);padding:20px 22px;margin:0 0 24px;background:rgba(201,164,106,.045)}
+.nota__t{font-family:var(--grot);font-size:10.5px;letter-spacing:.14em;color:var(--ottone);margin-bottom:8px}
+.nota p:last-child{margin-bottom:0}
+.nota.rossa{border-color:rgba(142,59,69,.6);background:rgba(142,59,69,.12)}
+.nota.rossa .nota__t{color:#D98A92}
+
+/* check */
+.check{margin:0 0 26px;border-top:1px solid var(--linea)}
+.check__t{font-family:var(--grot);font-size:11px;letter-spacing:.13em;color:var(--nebbia-scura);padding:14px 0 6px}
+.ck{display:flex;gap:13px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--linea-tenue);width:100%;text-align:left}
+.ck__q{flex:0 0 17px;height:17px;margin-top:5px;border:1px solid var(--nebbia-scura);display:grid;place-items:center;transition:.15s}
+.ck__q svg{width:11px;height:11px;stroke:var(--notte);fill:none;stroke-width:2.4;stroke-linecap:round;opacity:0}
+.ck.fatto .ck__q{background:var(--ottone);border-color:var(--ottone)}
+.ck.fatto .ck__q svg{opacity:1}
+.ck.fatto .ck__l{color:var(--nebbia-scura);text-decoration:line-through;text-decoration-color:var(--nebbia-scura)}
+.ck__l{font-size:17.5px;line-height:1.45}
+.azzera{font-family:var(--grot);font-size:11px;letter-spacing:.1em;color:var(--nebbia-scura);padding:12px 0}
+.azzera:hover{color:var(--ottone)}
+
+/* navigazione fondo */
+.piede{display:flex;justify-content:space-between;gap:12px;margin:56px 0 0;padding-top:26px;border-top:1px solid var(--linea)}
+.piede a{
+  text-decoration:none;font-family:var(--grot);font-size:12px;letter-spacing:.06em;
+  color:var(--nebbia);max-width:45%;line-height:1.4
+}
+.piede a:hover{color:var(--ottone)}
+.piede a span{display:block;font-size:10px;letter-spacing:.15em;color:var(--nebbia-scura);margin-bottom:5px}
+.piede a.fine{text-align:right;margin-left:auto}
+
+/* ricerca */
+.ricerca{position:fixed;inset:0;z-index:60;background:var(--notte);display:none;flex-direction:column}
+.ricerca.on{display:flex}
+.ricerca__top{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;border-bottom:1px solid var(--linea)}
+.ricerca input{
+  flex:1;background:none;border:0;color:var(--candoglia);font-family:var(--serif);font-size:22px;padding:4px 0;
+}
+.ricerca input::placeholder{color:var(--nebbia-scura)}
+.ricerca__esiti{flex:1;overflow-y:auto;padding:8px 0 60px}
+.esito{display:block;text-decoration:none;padding:15px 22px;border-bottom:1px solid var(--linea-tenue)}
+.esito:hover{background:var(--pietra)}
+.esito b{display:block;font-family:var(--grot);font-size:10.5px;letter-spacing:.12em;color:var(--ottone);font-weight:500;margin-bottom:5px}
+.esito span{font-size:17px;color:var(--candoglia);opacity:.85;display:block}
+.esito mark{background:rgba(201,164,106,.25);color:var(--ottone)}
+.vuoto{padding:40px 22px;color:var(--nebbia-scura);font-style:italic}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.barra,.indice,.velo,.piede,.ricerca{display:none!important}main{padding:0}}
+</style>
+</head>
+<body>
+<div class="velo" id="velo"></div>
+
+<header class="barra">
+  <button class="barra__b" id="apri" aria-label="Índice">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="barra__t" id="dove"><b>La Bibbia</b></div>
+  <button class="barra__b" id="cerca-b" aria-label="Buscar">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+  </button>
+</header>
+
+<nav class="indice" id="indice" aria-label="Índice"><div class="indice__tit">ÍNDICE</div><div id="indice-c"></div></nav>
+
+<main><div class="foglio" id="lettura"></div></main>
+
+<div class="ricerca" id="ricerca">
+  <div class="ricerca__top">
+    <button class="barra__b" id="chiudi-c" aria-label="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <input id="q" type="search" placeholder="Buscar em toda a Bíblia" autocomplete="off">
+  </div>
+  <div class="ricerca__esiti" id="esiti"></div>
+</div>
+
+<script>
+const L1 = {
+n:"I", t:"Il Servizio", s:"O que a sala faz, e como se faz", c:[
+
+{id:"essenza", n:"1", t:"A essência do serviço", b:[
+["p","Excelente serviço é a combinação de consistência operacional, atenção humana e capacidade de resolver. O objetivo não é transformar cada contato em espetáculo, mas reduzir esforço, incerteza e desconforto para o cliente."],
+["n","A ORDEM CORRETA","Primeiro elimine falhas básicas. Depois antecipe necessidades. Só então procure criar momentos memoráveis. Um gesto bonito não compensa um pedido errado, uma mesa abandonada ou uma alergia mal comunicada."],
+["h","Os seis comportamentos"],
+["ul",["Perceber antes que o cliente precise chamar.","Informar antes que o cliente descubra sozinho.","Oferecer alternativas em vez de apenas negar.","Assumir responsabilidade até a conclusão, mesmo quando outra área executa.","Adaptar o contato ao perfil e ao momento do cliente.","Encerrar cada solicitação confirmando que foi resolvida."]],
+["h","Os três níveis de serviço"],
+["t",["Nível","O que acontece","Como o cliente percebe"],[["Básico","O prometido é entregue corretamente.","Normal; era o mínimo."],["Proativo","A equipe antecipa dúvidas, atrasos e preferências.","Sinto que estão cuidando de mim."],["Memorável","A personalização é relevante, natural e bem executada.","Eles realmente me entenderam."]]],
+["h","O triângulo da confiança"],
+["t",["Pilar","Pergunta do cliente","Comportamento esperado"],[["Competência","Eles sabem o que estão fazendo?","Conhecer produtos, procedimentos, tempos e limites."],["Cuidado","Eles se importam comigo?","Escutar, observar, personalizar e acompanhar."],["Controle","A situação está sob controle?","Comunicar com calma, dar previsão e cumprir o combinado."]]],
+["h","As prioridades que nunca se invertem"],
+["ol",["Segurança: alergias, integridade dos alimentos, piso, vidros, fogo, intoxicação.","Precisão: mesa, pedido, quantidade, ponto, restrições e conta corretos.","Tempo e comunicação: fluxo adequado e cliente informado.","Conforto: limpeza, temperatura, volume, iluminação e espaço.","Personalização: nome, ocasião, preferência e recomendação.","Encantamento: surpresa ou gesto adicional quando fizer sentido."]],
+["r","NUNCA CONFUNDA","Alergia não é preferência e não é oportunidade de improvisação. Deve ser registrada, repetida, confirmada com a cozinha e acompanhada até a entrega."]
+]},
+
+{id:"standard", n:"2", t:"Padrão pessoal", b:[
+["h","Uniforme e higiene"],
+["c","Antes de entrar em sala",["Uniforme completo, limpo, sem odor, sem manchas, bem passado","Camisa e avental de reserva disponíveis para turnos longos","Sapatos fechados, seguros, limpos e adequados","Cabelo limpo e organizado; barba cuidada conforme o padrão","Mãos e unhas limpas; unhas curtas","Hálito neutro; desodorante; perfume discreto ou ausente","Acessórios mínimos e seguros","Caneta funcional, bloco ou dispositivo de pedido prontos"]],
+["h","Postura e linguagem corporal"],
+["t",["Faça","Não faça"],[["Coluna ereta, ombros naturais, cabeça levantada.","Apoiar-se em paredes, balcões, cadeiras ou mesas."],["Mãos visíveis e relaxadas.","Cruzar os braços, mãos nos bolsos, tocar o rosto."],["Olhar a sala e reconhecer quem procura atenção.","Ficar de costas para a praça por longos períodos."],["Contato visual breve e sorriso natural.","Encarar, invadir espaço, sorrir de forma automática."],["Aproximar-se com calma, pelo campo de visão.","Chegar por trás, tocar o cliente, interromper bruscamente."],["Caminhar com agilidade controlada.","Correr em sala, mesmo durante o rush."]]],
+["h","Voz profissional"],
+["ul",["Tom caloroso e seguro, sem intimidade forçada.","Volume suficiente para a mesa, não para a sala inteira.","Ritmo moderado; sob pressão, desacelere em vez de transmitir pânico.","Palavras articuladas; nunca falar enquanto se afasta.","Ao dar notícia difícil: pausa, explicação objetiva, solução.","Nunca responder no impulso quando irritado. Respire, confirme, depois fale."]]
+]},
+
+{id:"condotta", n:"3", t:"Conduta e disciplina em sala", b:[
+["n","REGRA DE PRESENÇA","No campo de visão dos clientes, no máximo dois funcionários podem conversar por poucos segundos, exclusivamente por motivo operacional. Três pessoas já formam um grupo e transmitem desatenção."],
+["ul",["Conversas pessoais somente em área interna e no momento autorizado.","Não comentar clientes, colegas, gorjetas, problemas da empresa, salários ou escala perto da sala.","Não discutir, corrigir ou repreender colegas diante dos clientes.","Não comer, beber, mascar chiclete, usar telefone pessoal ou redes sociais em sala.","Não apontar para clientes ou mesas; use indicação discreta.","Não demonstrar tédio: bocejar sem cobrir, suspirar, revirar os olhos, olhar o relógio.","Não bloquear corredores, portas, estação de serviço ou a vista principal.","Nunca passar por um problema evidente pensando: não é minha praça."]],
+["h","Comunicação operacional"],
+["t",["Situação","Conduta correta"],[["Precisa falar com colega","Aproxime-se, voz baixa, mensagem curta, confirme entendimento."],["Precisa corrigir colega","Garanta o cliente primeiro; corrija em particular, com fato e padrão."],["Sala cheia","Prioridades e movimentos previsíveis; não gritar nem correr."],["Erro de outra área","Não culpe ninguém diante do cliente. Assuma o contato e resolva internamente."],["Cliente chama outro garçom","Quem recebeu o pedido assume o encaminhamento e confirma o retorno."]]],
+["h","A sala não enxerga os bastidores"],
+["ul",["Problemas circulam como informação, não como fofoca.","Urgência não autoriza grosseria; exige clareza.","O responsável absorve tensão e devolve direção.","A equipe pode estar cansada; o ambiente não pode parecer abandonado."]]
+]},
+
+{id:"viaggio", n:"4", t:"A jornada do cliente", b:[
+["h","Antes da chegada"],
+["ul",["Ler reservas: nome, idioma, número de pessoas, horário, ocasião, restrições, pedidos.","Conferir indisponibilidades e preparar ao menos duas alternativas coerentes.","Definir praças, apoio, prioridades, mesas grandes, VIPs e responsáveis por ocasiões.","Testar iluminação, música, temperatura, POS, cardápios e comunicação com cozinha e bar."]],
+["h","Chegada e acolhimento"],
+["ol",["Reconheça imediatamente com olhar e expressão disponível, mesmo ocupado.","Cumprimente quando o cliente se aproximar.","Confirme reserva e pronúncia do nome sem expor informação pessoal.","Conduza, não aponte. Ajuste a velocidade ao grupo.","Apresente a mesa e ajude conforme o padrão da casa.","Informe o próximo passo: quem atenderá, cardápio, água ou primeiro pedido."]],
+["n","SE ESTIVER OCUPADO","Buonasera, vi ho visti. Arrivo subito da voi. / Good evening, I'll be right with you. Ignorar por trinta segundos parece mais longo do que pedir alguns instantes."],
+["h","Leitura inicial da mesa"],
+["t",["Sinal","Necessidade","Resposta"],[["Cardápios fechados, olhar procurando","Prontos para pedir","Aproxime-se ou reconheça à distância."],["Conversa intensa, momento íntimo","Privacidade","Evite interromper; escolha uma pausa natural."],["Telefone, laptop, relógio, respostas curtas","Rapidez","Seja direto e dê previsões claras."],["Perguntas e curiosidade","Orientação","Explique e recomende com confiança."],["Crianças inquietas","Reduzir espera","Priorize água, assentos e opções adequadas."],["Olhares para a vista ou celular","Experiência social, fotos","Dê espaço e indique momento e local se solicitado."]]],
+["h","Pedido"],
+["ul",["Escute sem interromper; pergunte só o que muda a recomendação.","Pergunte sobre alergias e restrições conforme o procedimento.","Registre modificações de forma inequívoca; nunca dependa da memória.","Repita itens sensíveis: quantidade, ponto, alergias, acompanhamentos, sequência.","Confirme disponibilidade antes de prometer.","Informe tempos incomuns antes que virem reclamação."]],
+["h","Durante a experiência"],
+["ul",["Check-back após o cliente provar, sem interromper conversa importante.","Observe água, bebidas, talheres, guardanapos, migalhas e pratos finalizados.","Retire itens com consentimento e respeite o ritmo de todos da mesa.","Evite o tudo bem repetido; observe e pergunte de forma específica.","Comunique qualquer atraso antes de ser chamado.","Nunca desapareça depois de vender. Presença é parte do serviço."]],
+["h","Conta e despedida"],
+["ul",["Entregue a conta quando solicitada, sem criar nova espera.","Confira mesa, itens, descontos e forma de pagamento antes de apresentar.","Trate divergências com discrição e sem insinuar culpa.","Agradeça de forma específica e despeça-se com contato visual.","Clientes recorrentes devem sentir reconhecimento, não vigilância."]]
+]},
+
+{id:"rapport", n:"5", t:"Rapport e personalização", b:[
+["p","Rapport é a sensação de ser compreendido e estar à vontade. Não exige amizade, extroversão nem conversa longa. Pode aparecer como cordialidade silenciosa, eficiência, humor leve ou interesse genuíno, conforme o perfil do cliente."],
+["h","A escala de contato"],
+["t",["Perfil","Como agir"],[["Reservado","Cordial, breve, preciso, pouco intrusivo."],["Neutro","Uma pergunta aberta leve; observe a resposta antes de continuar."],["Comunicativo","Converse sem abandonar a praça nem monopolizar a mesa."],["Com pressa","Confirme o tempo disponível e recomende a rota mais eficiente."],["Ocasião especial","Reconheça com elegância; nada de espetáculo sem consentimento."]]],
+["h","Sinais para encerrar o small talk"],
+["ul",["Respostas de uma palavra ou sem reciprocidade.","Pouco contato visual, corpo afastado, retorno à conversa da mesa.","Olhar frequente para telefone, relógio, cardápio ou saída.","Expressão concentrada, preocupação ou pedido explícito de rapidez.","O cliente muda de assunto ou não compartilha nada pessoal."]],
+["n","REGRA DE CALIBRAÇÃO","Faça uma abertura leve. Se o cliente não ampliar a conversa, recue com elegância. Respeitar o silêncio também é hospitalidade."],
+["h","Perguntas abertas úteis"],
+["ul",["É a primeira vez de vocês aqui?","Preferem algo mais leve ou mais estruturado?","Buscam um cocktail mais cítrico, doce, seco ou amargo?","Estão com algum horário definido para sair?","O que mais chamou a atenção de vocês no menu?","Estão celebrando alguma ocasião especial?"]],
+["h","Uso do nome"],
+["p","Use o nome quando ele estiver disponível legitimamente, quando você tiver certeza da pronúncia e quando soar natural. Repetir o nome duas ou três vezes parece técnica de venda. Uma saudação na chegada e um reconhecimento na despedida bastam. Em italiano, prefira Signor ou Signora mais o sobrenome em situações formais."],
+["h","Personalização responsável"],
+["ul",["Lembrar bebida, mesa, restrição ou preferência de um cliente recorrente.","Ajustar velocidade, explicação e formalidade ao perfil da mesa.","Recomendar com base no gosto declarado, não no produto mais caro.","Registrar apenas informação profissional, relevante e permitida.","Nunca comentar diante de acompanhantes informação de visitas anteriores."]]
+]},
+
+{id:"richieste", n:"6", t:"Pedidos, dúvidas e faltas", b:[
+["h","Método ESCUTA"],
+["t",["Etapa","Ação"],[["E — Esteja presente","Pare a atividade quando seguro, contato visual, reconheça."],["S — Silencie e ouça","Não interrompa, mesmo achando que já sabe a pergunta."],["C — Clarifique","Perguntas curtas para entender necessidade, prazo e preferência."],["U — Una os detalhes","Repita o que entendeu, sobretudo alergias e pedidos complexos."],["T — Tome responsabilidade","Resolva ou encaminhe com nome do responsável e previsão."],["A — Acompanhe","Confirme execução e satisfação. Feche o ciclo."]]],
+["n","QUANDO VOCÊ NÃO SABE","Nunca invente e nunca deixe a dúvida aberta. Diga que irá confirmar, informe quando voltará, e retorne mesmo que ainda não tenha a resposta final."],
+["t",["Italiano","English"],[["Desidero darle un'informazione precisa. Verifico subito e torno da lei.","I want to give you accurate information. Let me check and come right back."],["Non ne sono certo e preferisco verificare con la cucina.","I'm not completely certain, so I'll confirm with the kitchen."],["Sto ancora verificando; avrò un aggiornamento tra pochi minuti.","I'm still checking; I'll have an update in a few minutes."]]],
+["h","Quando algo não está disponível"],
+["ol",["Deixe o cliente concluir o pedido.","Reconheça a frustração ou peça desculpas pelo inconveniente.","Explique de forma breve, sem culpar fornecedor, cozinha ou colega.","Ofereça ao menos duas alternativas compatíveis com o desejo original.","Dê liberdade de escolha, sem pressionar.","Confirme a nova escolha e acompanhe a entrega."]],
+["e",[["Non c'è. / We don't have it.","Oggi non è disponibile; posso proporle due alternative simili?"],["È finito. / It's finished.","Al momento non è disponibile. Se desidera…, le consiglio…"],["Non si può. / We can't.","Quello che possiamo fare è…"]]],
+["h","Handover sem falhas"],
+["p","Quem recebeu o pedido continua responsável por acompanhar, ainda que outra pessoa execute. Ao transferir, comunique os seis elementos:"],
+["ul",["Quem: mesa e, quando relevante, nome do cliente.","O quê: pedido exato, sem interpretação vaga.","Contexto: por que está sendo solicitado.","Criticidade: alergia, segurança, aniversário, atraso ou desconforto.","Prazo: tempo prometido ou faixa estimada.","Responsável: quem fará e quem atualizará o cliente."]],
+["h","Prazos: transparência com margem"],
+["p","Prometer 45 minutos quando a previsão interna é 30 pode funcionar, mas vira manipulação se usado mecanicamente. O padrão sólido é uma faixa honesta com margem realista: aproximadamente 30 a 40 minutos. Se o prazo mudar, informe antes de vencer."]
+]},
+
+{id:"reclami", n:"7", t:"Reclamações e recuperação", b:[
+["h","Método ACALMA"],
+["t",["Etapa","Ação"],[["A — Acolha","Pare, postura aberta, deixe o cliente falar."],["C — Confirme","Resuma o problema e valide o impacto, sem discutir intenção."],["A — Assuma","Torne-se o ponto de contato; não empurre o cliente entre áreas."],["L — Lance solução","Apresente o que pode ser feito, o responsável e o prazo."],["M — Monitore","Acompanhe a execução e informe qualquer mudança."],["A — Assegure o fechamento","Volte à mesa, confirme satisfação e registre o aprendizado."]]],
+["h","O pedido de desculpas correto"],
+["p","Pedir desculpas pelo inconveniente não é confessar culpa pessoal. É reconhecer a experiência do cliente. Evite desculpa seguida de justificativa: o mas apaga tudo o que veio antes."],
+["e",[["Mi dispiace, ma la cucina…","Mi dispiace per l'attesa. Verifico personalmente e torno con un aggiornamento entro cinque minuti."],["I'm sorry, but we're very busy.","I'm sorry about the wait. I'll check personally and update you within five minutes."],["Non è colpa mia.","Capisco il disagio. Me ne occupo io e la tengo aggiornata."]]],
+["h","O que nunca fazer"],
+["ul",["Interromper para se defender.","Dizer ao cliente que ele está errado antes de verificar.","Culpar cozinha, bar, recepção, sistema ou colega.","Prometer compensação sem ter autoridade para concedê-la.","Sumir depois de dizer que vai verificar.","Fazer o cliente repetir a história para várias pessoas.","Discutir volume, tom ou caráter do cliente."]],
+["r","LIMITES E SEGURANÇA","Hospitalidade não significa aceitar ameaça, discriminação, assédio ou violência. Mantenha distância segura, não provoque, chame imediatamente o responsável e siga o protocolo da empresa. A proteção da equipe e dos demais clientes vem antes da tentativa de agradar."]
+]},
+
+{id:"italiano", n:"8", t:"Italiano profissional", b:[
+["p","O objetivo não é decorar frases artificiais. É substituir respostas fechadas, defensivas ou vagas por linguagem clara, respeitosa e orientada à solução."],
+["h","Frases recomendadas"],
+["t",["Situação","Use"],[["Recepção","Buonasera, benvenuti. Avete una prenotazione?"],["Reconhecer enquanto ocupado","Buonasera, arrivo subito da voi."],["Oferecer ajuda","Come posso aiutarla? / In cosa posso esserle utile?"],["Confirmar pedido","Solo per confermare: … È corretto?"],["Verificar informação","Verifico subito e torno da lei."],["Aceitar solicitação","Certamente. / Con piacere. / Me ne occupo subito."],["Pedir alguns instantes","Le chiedo solo qualche istante."],["Indisponibilidade","Oggi non è disponibile; posso suggerirle due alternative?"],["Atraso","Mi dispiace per l'attesa. Il piatto è in preparazione e prevediamo ancora circa … minuti."],["Alergia","Per sicurezza, confermo subito con la cucina."],["Responsabilidade","Me ne occupo personalmente e la tengo aggiornata."],["Checagem","Come sta andando? Posso portarle qualcos'altro?"],["Despedida","Grazie per essere stati con noi. Vi auguro una buona serata."]]],
+["h","Evite e prefira"],
+["e",[["Cosa vuoi? — informal e brusco","Cosa desidera? / Avete già scelto?"],["Dimmi. — soa impaciente","Mi dica pure."],["Non lo so. — encerra a ajuda","Non ne sono certo; verifico subito."],["Non è il mio tavolo. — transfere o problema","Avviso subito il collega e mi assicuro che arrivi."],["Non posso fare niente. — demonstra abandono","Quello che posso fare è…"],["Deve aspettare. — ordena sem contexto","Le chiedo qualche minuto; la aggiorno entro…"],["È colpa della cucina. — expõe conflito interno","Stiamo verificando e me ne occupo io."],["Calma. — aumenta a tensão","Capisco il disagio. Vediamo subito come risolvere."],["Ragazzi — informal demais","Signori / Buonasera / Voi, conforme o contexto."],["Aspetta. — imperativo brusco","Un momento, per favore. / Le chiedo un istante."]]],
+["n","NOTA DE NATURALIDADE","Nessun problema não é ofensivo e não precisa ser banido. Mas Certamente, Con piacere e Me ne occupo io comunicam mais disponibilidade e ação."]
+]},
+
+{id:"english", n:"9", t:"Professional English", b:[
+["h","Recommended phrases"],
+["t",["Situation","Use"],[["Welcome","Good evening, welcome. Do you have a reservation?"],["Acknowledge while busy","Good evening, I'll be right with you."],["Offer assistance","How may I assist you?"],["Confirm an order","Just to confirm: … Is that correct?"],["Check information","Let me confirm that for you and come right back."],["Accept a request","Certainly. / Of course. / I'll take care of that."],["Ask for time","May I have a moment to check that for you?"],["Unavailable item","It isn't available today; may I suggest two alternatives?"],["Delay","I'm sorry about the wait. It should be ready in approximately … minutes."],["Allergy","For your safety, I'll confirm that directly with the kitchen."],["Ownership","I'll take care of this personally and keep you updated."],["Check-back","How is everything? May I bring you anything else?"],["Farewell","Thank you for joining us. Have a wonderful evening."]]],
+["h","Avoid and prefer"],
+["e",[["What do you want? — blunt and transactional","What may I bring you? / Are you ready to order?"],["I don't know. — ends the help","I'm not certain; let me confirm that for you."],["That's not my table. — rejects ownership","I'll contact your server and make sure they come over."],["We can't do that. — closes the conversation","What we can offer is…"],["You have to wait. — sounds commanding","It will take approximately … minutes; may I…?"],["The kitchen is late. — blames another team","Your order is being prepared; I'll update you by…"],["Calm down. — usually escalates","I understand your concern. Let me see what I can do now."],["Guys — too casual","Good evening / everyone, as appropriate."],["It's not my fault. — defensive","I understand the inconvenience. I'll take ownership of the follow-up."],["Wait. — abrupt imperative","One moment, please."]]],
+["n","ABOUT NO PROBLEM","It is common and not inherently wrong. In premium service, certainly, my pleasure or I'll take care of it sound more intentional."]
+]}
+
+]};
+L1.c = L1.c.concat([
+
+{id:"checklist-resp", n:"10", t:"Checklists do responsável", b:[
+["n","REGRA DE CONTROLE","Primeira volta: identificar. Depois: delegar. Segunda volta: confirmar. Mandar fazer sem conferir novamente não é controle; é suposição."],
+["c","A. Leitura da operação",["Ver todas as reservas, horários e número de pessoas","Identificar mesas grandes, VIPs, recorrentes e ocasiões especiais","Ler observações sobre alergias, acessibilidade, crianças e pedidos","Verificar conflitos de mesa, atrasos, alterações e overbooking","Confirmar indisponibilidades e duas alternativas para cada falta"]],
+["c","B. Ambiente e atmosfera",["Luzes: sala, entrada, corredores, lounges e banheiros","Nenhuma lâmpada apagada, piscando ou com tonalidade errada","Música: sistema, playlist, volume e equilíbrio entre áreas","Temperatura, climatização, cheiro e circulação de ar","Terraço: vento, chuva, piso, aquecedores, guarda-sóis, alternativa interna"]],
+["c","C. Inspeção dos lounges",["Lounge 1 controlado","Lounge 2 controlado","Lounge 3 controlado","Lounge 4 controlado","Lounge 5 controlado"]],
+["p","Em cada área: mesas, sofás, cadeiras, almofadas, piso, cinzeiros, cardápios, iluminação, passagem e ausência de objetos esquecidos. Nenhuma área é considerada pronta por suposição."],
+["c","D. Mise en place",["Sala, mesas e cadeiras alinhadas; estações limpas","Guardanapos de serviço e de cliente em quantidade","Pratos limpos nas estações corretas","Talheres limpos, polidos, separados, em quantidade","Copos e taças polidos, sem marcas, sem odor, sem danos","Bandejas, abridores, saca-rolhas, canetas, blocos, baldes de gelo","POS, impressoras, comandas e canais de comunicação testados"]],
+["c","E. Estoque e reposição",["Patatine carregadas","Olive carregadas","Taralli carregados","Pane carregado","Acqua naturale e frizzante carregadas","Gelo e acompanhamentos controlados"]],
+["c","F. Banheiros",["Piso, vaso, pia e espelho limpos; lixeiras vazias","Papel higiênico, sabonete e papel para mãos disponíveis","Torneiras, descargas, secadores e iluminação funcionando","Cheiro adequado e responsável pelas verificações definido"]],
+["c","G. Delegação e segunda volta",["Cada falha tem uma pessoa responsável por corrigi-la","Cada tarefa recebeu prazo claro, anterior à abertura","Todas as correções verificadas pessoalmente na segunda volta","Praças, funções, intervalos, apoio e mesas grandes definidos","Uniforme, higiene, ferramentas e postura da equipe controlados"]],
+["h","Briefing de cinco minutos"],
+["ol",["Hoje: volume previsto, horários críticos e perfil das reservas.","Produto: indisponibilidades, novidades, recomendações e tempos.","Segurança: alergias, riscos, clima e pontos de atenção.","Pessoas: praças, papéis, apoio e escalonamento.","Padrão do dia: um comportamento específico a observar."]],
+["c","Durante o serviço",["Toda chegada é reconhecida imediatamente","Nenhuma mesa fica sem dono claro","Ninguém corre, grita ou cria aglomeração em sala","Máximo de dois funcionários em conversa visível, por poucos segundos","Indisponibilidades e atrasos comunicados antes da reclamação","Pedidos pendentes têm responsável e prazo","Alergias confirmadas e acompanhadas até a entrega","Ritmo das praças equilibrado; apoio deslocado antes do colapso","Entrada, banheiros, estações, piso e ambiente dentro do padrão","Reclamações registradas, assumidas e fechadas","Equipe com olhos na sala, mãos disponíveis, postura correta"]],
+["c","Encerramento",["Solicitações e reclamações concluídas ou formalmente transferidas","Erros de conta, atrasos, devoluções e compensações registrados","Quebras, faltas e manutenção comunicadas com responsável e prazo","Preferências de clientes recorrentes registradas","A equipe recebeu um reconhecimento específico e uma correção objetiva","O turno seguinte recebeu handover completo"]]
+]},
+
+{id:"qualita", n:"11", t:"Controle de qualidade", b:[
+["h","Observar, em vez de apenas perguntar"],
+["t",["Área","Evidência observável"],[["Acolhimento","Tempo até reconhecimento e qualidade da primeira frase."],["Presença","Clientes procurando atenção; mesas sem contato; equipe de costas."],["Conhecimento","Segurança nas respostas e qualidade das recomendações."],["Comunicação","Pedidos confirmados, prazos informados, handovers completos."],["Ritmo","Intervalos entre etapas e antecipação de atrasos."],["Ambiente","Limpeza, alinhamento, música, luz, temperatura, banheiros."],["Recuperação","Tempo para assumir, resolver, atualizar e fechar reclamações."],["Equipe","Postura, colaboração, aglomerações, conversas inadequadas."]]],
+["h","Mini placar do turno"],
+["t",["Indicador","Registrar"],[["Reclamações","Quantidade, motivo, mesa, solução, recorrência."],["Pedidos refeitos ou devolvidos","Motivo e ponto de falha: anotação, produção, entrega ou expectativa."],["Atrasos relevantes","Etapa, duração, causa, momento da comunicação."],["Indisponibilidades","Produto, horário em que acabou, alternativa oferecida."],["Elogios nominais","Pessoa e comportamento reconhecido pelo cliente."],["Pendências","Responsável, prazo e confirmação de handover."]]],
+["h","Como corrigir sem humilhar"],
+["ol",["Proteja primeiro a experiência do cliente.","Converse em particular e descreva o fato observado.","Explique o impacto sobre cliente, equipe ou operação.","Reafirme o padrão esperado com uma ação concreta.","Peça que o funcionário confirme o entendimento.","Observe novamente e reconheça a correção quando ocorrer."]],
+["n","AUTORIDADE DO RESPONSÁVEL","O responsável não deve ser apenas o melhor garçom do turno. Ele precisa enxergar o conjunto, redistribuir recursos, prevenir falhas, proteger o padrão e desenvolver a equipe."]
+]},
+
+{id:"concierge", n:"12", t:"Mentalidade concierge", b:[
+["p","Excelência não depende de simpatia. Pode ser ensinada, praticada e medida. Cornell resume em quatro competências; a EHL reforça consistência, antecipação e formação; Les Clefs d'Or acrescenta conhecimento local, rede e discrição."],
+["h","As quatro competências PERC"],
+["t",["Competência","Em sala","Comportamento observável"],[["Poise — compostura","Manter calma e presença sob pressão.","Voz estável, movimento controlado, resposta sem defensividade."],["Empathy — empatia","Compreender o impacto para aquele cliente.","Escuta, reconhecimento e solução ajustada à necessidade real."],["Resourcefulness — desenvoltura","Encontrar caminhos dentro dos limites da casa.","Consulta fontes, mobiliza colegas, oferece alternativas viáveis."],["Caring — cuidado","Demonstrar interesse até o fechamento.","Acompanha, atualiza e confirma se a necessidade foi atendida."]]],
+["h","A mentalidade aplicada ao restaurante"],
+["ul",["Conhecer o próprio produto: ingredientes, origem, preparo, sabor, tempo, combinações.","Conhecer o entorno: táxi, transporte, farmácia, pontos de interesse, opções confiáveis.","Recomendar apenas o que se conhece ou o que foi verificado.","Usar a rede interna: cozinha, bar, recepção, segurança e portaria como um único sistema.","Tratar pedidos incomuns com curiosidade profissional antes de dizer que não é possível.","Proteger privacidade, preferências e relações pessoais do cliente.","Transformar conhecimento local em solução rápida e relevante."]],
+["h","Detalhes que elevam a experiência"],
+["t",["Momento","Padrão avançado"],[["Antes da chegada","Antecipar idioma, ocasião, restrições, mobilidade, preferência de mesa e clima."],["Recepção","Reconhecer de imediato, pronunciar nomes corretamente, explicar qualquer espera."],["Acomodação","Ajudar com casacos, bolsas, cadeiras, crianças e acessibilidade sem constranger."],["Primeira orientação","Explicar conceito e particularidades do menu sem discurso automático."],["Recomendação","Investigar gosto, fome, tempo e orçamento implícito; não empurrar o mais caro."],["Ritmo","Coordenar bar, cozinha e retirada: nem vazios longos nem pressa."],["Privacidade","Não repetir nome, consumo, conta ou histórico em voz alta diante de acompanhantes."],["Ambiente","Corrigir temperatura, música, vento, luz e estabilidade da mesa antes da reclamação."],["Ocasião especial","Reconhecer com elegância; confirmar antes de anúncio, música ou exposição pública."],["Vista e fotografia","No rooftop, proteger a experiência visual e orientar fotos sem bloquear o serviço."],["Conta","Entregar com rapidez e discrição; resolver divergência longe dos demais convidados."],["Saída","Antecipar casacos, elevador, táxi, direção e clima; agradecer sem pressionar a mesa."]]],
+["h","Presença sem excesso"],
+["p","Serviço premium não é interromper mais vezes. É aparecer no momento certo. Uma mesa bem atendida pode receber poucos contatos, desde que nunca fique abandonada."],
+["h","Autonomia com limites"],
+["ul",["Definir o que cada função resolve sem autorização.","Definir quais compensações exigem aprovação do responsável ou gerente.","Permitir pequenas adaptações quando forem seguras, registradas e possíveis.","Nunca permitir improvisação sobre alergias, preços, segurança ou promessas externas.","Avaliar a decisão pelo resultado e pelo raciocínio, sem punir toda iniciativa."]],
+["n","APLICAÇÃO CORRETA","Les Clefs d'Or é uma associação profissional de concierges de hotel, não uma escola de gestão de restaurantes. Seus pilares de Serviço e Amizade inspiram a atitude; os procedimentos de sala continuam sendo definidos pela operação e pela liderança da casa."]
+]},
+
+{id:"ruoli", n:"13", t:"Funções e autoridade", b:[
+["p","Grande parte dos conflitos nasce de papéis vagos. O organograma do turno deve dizer quem decide, quem executa, quem apoia e quem precisa ser informado. Tempo de casa merece respeito, mas não concede autoridade automática sobre colegas nem direito de ignorar a liderança do turno."],
+["t",["Função","Responsabilidade","Não deve"],[["Restaurant manager","Resultados, políticas, escala, disciplina formal, recursos, integração entre sala, cozinha e bar.","Intervir só quando já explodiu, ou contradizer o responsável diante da equipe."],["Responsável de sala","Comandar o turno, distribuir praças, controlar padrão, ritmo, reservas, reclamações, segurança e handovers.","Ficar preso a uma mesa ou executar tudo enquanto perde a visão da sala."],["Host","Receber, confirmar reservas, administrar espera, fluxo de entrada e primeira impressão.","Prometer mesa ou tempo sem confirmar com o responsável."],["Chef de rang","Assumir a experiência das mesas da praça: orientar, registrar, servir, acompanhar e fechar.","Usar não é minha mesa para ignorar uma necessidade visível."],["Commis / runner","Transportar pratos e bebidas, conhecer posições, apoiar mise en place e reposição.","Entregar item sem confirmar mesa, posição, alergia ou instrução."],["Bar","Produzir com padrão, comunicar tempos e indisponibilidades, garantir consistência.","Alterar receita ou prioridade sem comunicar a sala."],["Pass","Controlar saída, sequência, temperatura, aparência e informação entre cozinha e sala.","Liberar prato duvidoso ou ignorar marcação de alergia."],["Apoio / back waiter","Água, pão, limpeza, reposição e suporte transversal.","Ser tratado como função inferior ou receber ordens contraditórias."]]],
+["h","Regras de autoridade no turno"],
+["ol",["O gerente define políticas e conduz medidas formais.","O responsável distribui funções e prioridades durante o turno.","Cada praça tem um titular, mas todos protegem a experiência geral.","Uma ordem pode ser questionada por segurança, legalidade, alergia, impossibilidade real ou conflito de instruções.","Preferência pessoal, antipatia ou tempo de casa não justificam recusa de colaboração.","Se duas ordens conflitarem, interrompa a execução e peça prioridade ao responsável.","Feedback operacional breve pode ocorrer no momento; correção pessoal ocorre em privado."]],
+["h","Matriz rápida de decisão"],
+["t",["Assunto","Quem decide"],[["Troca de praça","O responsável decide e informa host e equipe envolvida."],["Alergia","A cozinha confirma viabilidade; sala, pass e responsável acompanham."],["Compensação","Seguir os limites de autonomia e informar caixa e gerente."],["Segurança ou expulsão","Somente gerente, segurança ou equipe autorizada."],["Conflito de staff","O responsável estabiliza o turno; gerente, direção ou RH decide medidas formais."]]]
+]},
+
+{id:"formazione", n:"14", t:"Treinamento da equipe", b:[
+["p","Treinamento não pode ser apenas observar um colega durante dois turnos. Onboarding estruturado, técnica, comunicação, solução de problemas, adaptabilidade e leitura do cliente."],
+["h","Formação inicial em sete turnos"],
+["t",["Turno","Foco","Critério de liberação"],[["1","Cultura, tour, regras, higiene, segurança, cadeia de comando.","Localiza áreas, materiais, saídas e responsáveis."],["2","Mise en place, lounges, estações, reposição, checklists.","Prepara uma área sem omissões."],["3","Menu, bebidas, ingredientes, tempos, combinações, faltas.","Responde teste oral e sabe quando confirmar."],["4","Alergias, pedidos especiais, POS, comanda, handover.","Registra e transmite pedido crítico sem erro."],["5","Sequência de serviço e leitura do cliente, com tutor.","Atende parte da praça com supervisão."],["6","Reclamações, atrasos, conflitos, role-play de situações difíceis.","Usa os protocolos sem culpar nem abandonar."],["7","Turno observado com responsabilidade progressiva.","Demonstra padrão técnico, comunicação e trabalho em equipe."]]],
+["h","Método de aprendizagem"],
+["ol",["Explique o padrão e por que ele importa.","Demonstre uma execução correta.","Peça que a pessoa pratique em ambiente seguro.","Observe sem interromper por detalhes não críticos.","Dê feedback sobre um comportamento específico.","Repita a prática até alcançar consistência.","Registre a competência como treinada, em desenvolvimento ou certificada."]],
+["h","Rotina contínua"],
+["ul",["Briefing diário de cinco minutos com um único padrão comportamental.","Role-play semanal de 15 a 20 minutos: reclamação, alergia, atraso, recusa, cliente apressado.","Degustação e revisão de produto em pequenas doses, com teste oral.","Shadowing cruzado entre funções para reduzir rivalidade.","Feedback individual curto após o turno, sem corrigir tudo de uma vez.","Revisão mensal de reclamações, elogios, devoluções, atrasos e falhas recorrentes."]],
+["h","Ficha de observação"],
+["t",["Competência","Observar"],[["Apresentação","Uniforme, higiene, postura e ferramentas."],["Conhecimento","Menu, bebidas, alergias, tempos e alternativas."],["Execução","Precisão, sequência, limpeza e ritmo."],["Comunicação","Escuta, clareza, confirmação e tom de voz."],["Leitura do cliente","Adaptação, privacidade e antecipação."],["Trabalho em equipe","Ajuda, handover, respeito e resposta à direção."],["Recuperação","Responsabilidade, solução, atualização e fechamento."]]],
+["p","Escala de 1 a 5. Uma nota baixa exige exemplo e ação de desenvolvimento. Avaliação sem evidência vira opinião, e opinião de chefe alimenta exatamente os conflitos que o processo deveria evitar."]
+]},
+
+{id:"conflitti", n:"15", t:"Conflitos e recusas", b:[
+["p","Conflito produz melhoria quando discute ideias e processos. Torna-se destrutivo quando ataca pessoas, bloqueia cooperação ou ameaça o serviço. O papel do responsável é intervir cedo, com imparcialidade, e acompanhar o resultado."],
+["h","Primeiro classifique o problema"],
+["t",["Tipo","Exemplo","Resposta inicial"],[["Tarefa","Divergência sobre prioridade, praça ou método.","Clarificar objetivo, função, prioridade e decisão."],["Processo","Ordens duplicadas, handover incompleto, carga desigual.","Corrigir fluxo e definir um único responsável."],["Relacionamento","Antipatia, competição, ressentimento, falta de confiança.","Ouvir separadamente e estabelecer regras de interação."],["Conduta","Humilhação, recusa deliberada, sabotagem, grito, desrespeito.","Interromper, registrar e envolver o gerente."],["Segurança","Ameaça, assédio, discriminação, violência, risco ao cliente.","Proteger pessoas e acionar imediatamente gerente, segurança ou RH."]]],
+["h","Protocolo de intervenção"],
+["ol",["Estabilize o serviço: separe os envolvidos, redistribua tarefas, proteja os clientes.","Converse individualmente: fatos, exemplos, datas, testemunhas, impacto. Sem julgamento no corredor.","Verifique outras fontes: escala, comandas, registros, testemunhas.","Defina o problema em linguagem neutra: comportamento observado, não caráter.","Escolha a resposta: orientação, acordo, mediação, treinamento, plano de melhoria ou encaminhamento formal.","Registre decisão, ações, responsáveis, prazo e consequência em caso de repetição.","Acompanhe: confirme mudança real. Não considere resolvido só porque houve conversa."]],
+["h","Cenários frequentes"],
+["t",["Situação","Intervenção"],[["Um se sente superior","Reafirmar papéis do turno. Experiência gera responsabilidade de exemplo, não privilégio."],["Recusa trabalhar com alguém","Investigar segurança ou assédio. Sem risco concreto, exigir colaboração e definir tarefas objetivas."],["Recusa uma tarefa","Confirmar papel, prioridade, capacidade ou risco. Se legítima e segura, repetir a instrução e registrar."],["Dois discutem diante de clientes","Interromper, separar, cobrir a área, tratar em privado depois do serviço."],["Correção pública entre colegas","Parar a exposição, resolver o cliente, devolver o feedback ao canal correto."],["Carga desigual","Redistribuir por volume, mesas e complexidade. Por dados, não por quem reclama mais alto."],["Fofoca ou campanha contra colega","Exigir fatos pelos canais corretos; proibir mobilização informal e ridicularização."],["Competição por gorjeta ou cliente","Regra transparente, sem apropriação de mesas; medir colaboração, não só venda."],["Erro de handover","Corrigir o pedido, reconstruir a cadeia da informação, treinar confirmação fechada."],["Explosão emocional","Retirar da sala, assegurar cobertura, avaliar segurança, conversar só com autocontrole."],["Assédio, discriminação ou ameaça","Não mediar como desentendimento. Preservar segurança, registrar e escalar formalmente."]]],
+["h","Como responder a uma recusa"],
+["ul",["Ouça a objeção: qual é o impedimento concreto?","Teste legitimidade: segurança, alergia, função, treinamento, carga, instruções conflitantes.","Decida: ajuste quando houver razão válida; mantenha quando não houver.","Dê expectativa e prazo: quem faz o quê, até quando.","Explique a consequência operacional sem ameaçar.","Se persistir, cubra o serviço e encaminhe ao gerente para registro."]],
+["t",["Italiano","English"],[["Capisco che ci sia una difficoltà. Qual è l'impedimento concreto?","I understand there is a difficulty. What is the specific obstacle?"],["Se c'è un problema di sicurezza, dimmelo subito. Altrimenti questa è la priorità del turno.","If there is a safety issue, tell me now. Otherwise this is the shift priority."],["Ne parliamo in privato dopo aver messo in sicurezza il servizio.","We will discuss this privately after the service is stabilized."]]],
+["h","Caso crítico: comportamento recorrente"],
+["p","Não resolva convencendo os outros a ter paciência, nem premiando a pessoa com autoridade informal para acalmar sua insegurança. Isso ensina que criar tensão gera poder. Também não a diagnostique. A liderança age sobre comportamentos verificáveis e impacto acumulado."],
+["ol",["Preparar fatos: incidentes, datas, ações, presentes, impacto. Separar rumor de fato confirmado.","Conversa formal e privada, com quem tem autoridade disciplinar. Reconhecer a experiência sem permitir que o tempo de casa funcione como imunidade.","Plano de melhoria comportamental escrito, com comportamento esperado, medida e prazo.","Reconstruir segurança da equipe: informar só o necessário, não pedir perdão coletivo, proteger quem relata.","Consequência: se melhorar, reconhecer com fatos. Se persistir, é questão de conduta, e o procedimento formal cabe ao gerente, à direção e ao RH."]],
+["r","DECISÃO DIFÍCIL","Quando ninguém quer trabalhar com uma pessoa, isso não prova automaticamente que ela é a única culpada. Mas múltiplos relatos consistentes, fatos documentados e repetição após expectativas claras exigem ação. Manter alguém destrutivo apenas porque é antigo transfere o custo para os melhores funcionários e, depois, para os clientes."],
+["n","LIMITE DO RESPONSÁVEL","O responsável registra e encaminha. Gerente, direção e RH aplicam o procedimento formal previsto pela empresa, pelo contrato e pelo CCNL. Nunca improvise punição, redução de horas ou afastamento por conta própria."],
+["h","Registro mínimo de incidente"],
+["ul",["Data, horário, local e turno.","Pessoas envolvidas e testemunhas.","Palavras ou ações observadas, sem adjetivos sobre personalidade.","Impacto no cliente, segurança, operação ou equipe.","Intervenção realizada e instrução dada.","Resposta do funcionário.","Ação seguinte, responsável e data de revisão."]]
+]},
+
+{id:"principi", n:"16", t:"Os vinte princípios", b:[
+["ol",["Reconheça toda chegada.","Nunca deixe o cliente descobrir sozinho um problema conhecido.","Escute até o fim antes de responder.","Se não souber, confirme; nunca invente.","Repita pedidos sensíveis e registre detalhes.","Alergia é segurança, não preferência.","Não negue sem buscar alternativas.","Não culpe outro setor diante do cliente.","Quem recebe uma solicitação acompanha até o fechamento.","Dê prazo realista e atualize antes de ele vencer.","Nunca corra, grite ou transmita pânico em sala.","No máximo dois funcionários em conversa operacional visível.","Conversa pessoal nunca perto de clientes.","Postura, uniforme e higiene fazem parte do serviço.","Adapte o contato; não force intimidade ou small talk.","Use nomes com naturalidade e discrição.","Observe mais do que pergunta se está tudo bem.","Corrija colegas em particular, com padrão claro.","Registre falhas para impedir repetição.","O cliente deve perceber calma, clareza, cuidado e controle."]],
+["n","A REFERÊNCIA","Ser referência não é trabalhar de maneira heroica para corrigir caos todos os dias. É criar um padrão tão claro que a equipe consiga oferecer qualidade mesmo quando você não está olhando."]
+]}
+
+]);
+const L2 = {
+n:"II", t:"La Guida", s:"Como se lidera e se constrói a equipe", c:[
+
+{id:"se-stesso", n:"1", t:"Liderança pessoal", b:[
+["p","Poder não é o cargo. Um líder tem acesso a fontes distintas, e depender só da primeira é o erro clássico de quem assume um turno pela primeira vez."],
+["t",["Fonte","De onde vem","Custo de uso"],[["Posicional","O crachá.","Alto. Desgasta rápido."],["Recompensa","Escala, folga, seção boa.","Médio. Cria dependência."],["Coerção","Punição.","Altíssimo. Destrói confiança."],["Especialista","Você sabe fazer melhor.","Baixo. Cresce com o uso."],["Referência","As pessoas querem ser como você.","Baixo. O mais duradouro."],["Informação","Você tem contexto que os outros não têm.","Perigoso se retido."]]],
+["p","Diagnóstico honesto: em qual dessas você mais se apoia hoje? Se as três primeiras somam mais de metade, a equipe obedece, mas não segue."],
+["n","AUTORIDADE E INFLUÊNCIA","Autoridade faz alguém arrumar a mesa. Influência faz alguém arrumar a mesa do jeito certo quando você não está olhando. Só a segunda escala."],
+["h","Escuta em três níveis"],
+["ul",["Ouvir para responder. Você já está montando a resposta. É o padrão, e é ruim.","Ouvir para entender. Você reformula com suas palavras antes de opinar.","Ouvir o que não foi dito. Tom, hesitação, o que a pessoa evitou mencionar."]],
+["p","E o lado difícil: receber. Quando alguém da equipe te critica, sua primeira frase deve ser uma pergunta, nunca uma explicação. Me dá um exemplo de quando isso aconteceu? A explicação vem depois, se ainda for necessária."],
+["h","Os três horizontes"],
+["ul",["Hoje: o serviço de agora. Urgente, absorvente, infinito.","Este trimestre: treinamento, processos, contratações.","Este ano: posicionamento, estrutura, carreira."]],
+["p","Bloqueie tempo protegido para o segundo e o terceiro. Sem bloqueio, o primeiro come cem por cento."],
+["n","REGRA DO DOCUMENTO","A maior parte do tempo perdido de um responsável não é em tarefas, é em interrupção por falta de padrão. Toda pergunta que você responde duas vezes vira documento."]
+]},
+
+{id:"squadra", n:"2", t:"Arquitetura de equipe", b:[
+["p","Duas estruturas complementares. Hackman diz o que o líder projeta. O estudo do Google diz o que a equipe sente."],
+["h","As cinco condições de Hackman"],
+["p","A descoberta central: a colaboração depende menos da personalidade dos membros do que de cinco condições habilitadoras. A implicação é dura e libertadora — se o time não funciona, olhe primeiro para o desenho, não para as pessoas."],
+["t",["Condição","O que significa em sala"],[["Um time de verdade","Fronteira clara, composição estável, interdependência real. Se cada um pode fazer sozinho, é um grupo com o mesmo chefe, não um time."],["Direção convincente","Clara, desafiadora e consequente. Dar um bom serviço falha nos três critérios. Nenhuma mesa espera mais de quatro minutos pelo primeiro contato passa nos três."],["Estrutura habilitadora","Desenho da tarefa, tamanho e mix da equipe, normas de conduta escritas."],["Contexto de apoio","Recursos, informação, formação e reconhecimento. Se o indivíduo é recompensado enquanto o time falha, a disfunção está no sistema. A regra de gorjeta é o instrumento mais poderoso aqui — e o mais mal desenhado."],["Coaching no momento certo","No lançamento, no meio e no fechamento. Briefing, ajuste, debriefing. Coaching no meio da correria não entra."]]],
+["h","As cinco dinâmicas de uma equipe eficaz"],
+["p","Em mais de 180 equipes estudadas, quem está no time importou menos do que como o time trabalha junto. Cinco fatores separaram os melhores, e o primeiro é de longe o mais importante."],
+["ol",["Segurança psicológica: as pessoas se sentem seguras para assumir riscos interpessoais — admitir erro, fazer pergunta, propor ideia — sem medo de constrangimento ou punição.","Confiabilidade: as pessoas fazem o que disseram que fariam, no prazo e no padrão.","Estrutura e clareza: papéis, metas e processo de decisão definidos.","Significado: o trabalho importa pessoalmente para quem o faz.","Impacto: a equipe acredita que o que faz muda alguma coisa."]],
+["p","Sem a primeira, a confiabilidade se erode porque as pessoas escondem problemas, a clareza sofre porque ninguém faz a pergunta que revelaria o mal-entendido, e significado e impacto ficam sem ser ditos."],
+["h","Seis práticas para construir segurança psicológica"],
+["ol",["Admita seu erro primeiro, em voz alta, no briefing. É o único atalho real.","Separe erro de negligência, publicamente. Se a equipe não sabe qual é qual, assume o pior e para de tentar.","Convide a discordância nominalmente. Convite genérico não funciona.","Nunca corrija tecnicamente na frente do cliente.","Reaja bem à má notícia. A primeira vez que você reagir mal, comprou meses de silêncio.","Feche o loop. Sugestão adotada, diga de quem foi. Não adotada, diga por quê."]],
+["h","Estágios de formação"],
+["p","Todo time novo, ou reconfigurado por uma contratação, atravessa formação, conflito, normatização e performance. O erro clássico é interpretar a fase de conflito como fracasso e reagir com autoridade, o que congela o time ali."],
+["h","O contrato de equipe"],
+["p","Uma página, escrita com a equipe, não para ela."],
+["ul",["Por que este time existe.","Quem faz o quê: papéis e fronteiras.","Como decidimos: quem decide sozinho, quem consulta.","Como nos comunicamos: canal, horário, o que é urgente.","Nossas cinco normas: o que sempre fazemos e o que nunca fazemos.","Como resolvemos desacordo."]],
+["n","A NORMA QUE RESOLVE METADE","Discutimos dentro, falamos com uma voz só para fora."]
+]},
+
+{id:"persone", n:"3", t:"Pessoas e performance", b:[
+["h","Contratação"],
+["p","O preditor mais forte de comportamento futuro é comportamento passado em situação semelhante. Abandone perguntas hipotéticas e peça sempre um episódio concreto: situação, tarefa, ação e resultado. Se a pessoa só diz nós, cave."],
+["ul",["Me conta a última vez que você errou com um cliente. O que aconteceu depois?","Me conta de uma vez em que você discordou de um chefe. Como foi?","Qual foi o serviço mais difícil da sua vida e o que você fez?"]],
+["h","Integração em 30, 60 e 90 dias"],
+["t",["Fase","Foco","Marco"],[["Dias 1 a 7","Pertencimento e segurança.","Sabe onde fica tudo, conhece todos pelo nome."],["Dias 8 a 30","Padrão técnico.","Executa a sequência de serviço sem apoio."],["Dias 31 a 60","Autonomia.","Resolve reclamação simples sozinho."],["Dias 61 a 90","Contribuição.","Propõe uma melhoria de processo."]]],
+["p","O marco dos noventa dias não é está aprovado. É já melhorou alguma coisa aqui."],
+["h","Feedback"],
+["p","Situação, comportamento, impacto. Sem adjetivo sobre a pessoa. Ontem no segundo turno, você levou a conta antes que a mesa 12 pedisse; eles ficaram desconfortáveis e a avaliação citou pressa. Comportamento é corrigível, caráter não é."],
+["p","Depois disso, pergunte: da próxima vez, o que você faz diferente? A pessoa propõe, e a adesão sobe."],
+["n","A REGRA","Feedback corretivo é sempre individual e sempre em até 24 horas. Feedback positivo é público e específico. Um obrigado genérico não ensina nada."],
+["h","Coaching"],
+["p","Ensinar dá a resposta; coaching faz a pessoa encontrá-la. Dez minutos depois do serviço: qual é o objetivo, qual é a realidade hoje, quais caminhos existem, o que você vai fazer até quando. Uma conversa de quinze minutos por pessoa a cada duas semanas é mais do que noventa e cinco por cento dos restaurantes faz."],
+["h","Motivação"],
+["ul",["Autonomia: margem de decisão dentro do limite definido.","Maestria: trilha visível de progressão técnica — vinhos, coquetelaria, idiomas.","Propósito: conexão entre o trabalho e algo que importa.","Reconhecimento específico e público.","Justiça percebida: escala, seções e gorjeta com regra transparente."]],
+["p","A última é a mais subestimada. Injustiça percebida na distribuição de seções e turnos destrói mais times do que salário baixo."],
+["h","Problemas de comportamento"],
+["ol",["Conversa informal: descreve, pergunta, alinha.","Conversa formal com registro: expectativa explícita, prazo, consequência nomeada.","Advertência escrita, conforme o enquadramento legal aplicável.","Separação."]],
+["p","Nunca pule degraus, nunca fique preso no primeiro. Repetir a conversa informal cinco vezes ensina à equipe inteira que a regra não vale."]
+]},
+
+{id:"conflitto", n:"4", t:"Comunicação e poder", b:[
+["h","Dois tipos de conflito"],
+["ul",["Conflito de tarefa: divergência sobre como fazer. É produtivo e deve ser encorajado.","Conflito relacional: divergência sobre quem é quem. É destrutivo e deve ser interrompido."]],
+["p","O primeiro vira o segundo quando não é bem conduzido. O trabalho do líder é manter a discussão no primeiro."],
+["h","Mediar entre dois da equipe"],
+["ol",["Reunião separada com cada um antes: entender, não julgar.","Sessão conjunta com regra de não interrupção.","Cada um descreve o problema em termos de impacto sobre o trabalho, não de intenção do outro.","Cada um repete o que entendeu do outro antes de responder.","Acordo escrito, específico e verificável.","Revisão marcada em quinze dias."]],
+["p","Erro comum: resolver você mesmo, decidindo quem tem razão. Ganha velocidade, perde a capacidade da equipe de se autorregular."],
+["h","Conversas difíceis"],
+["p","Toda conversa difícil tem três camadas: o que aconteceu, os sentimentos envolvidos e o que aquilo diz sobre a identidade de cada um. As discussões travam porque as pessoas falam da primeira enquanto reagem à terceira. Abertura que funciona: quero falar de uma coisa e quero entender sua visão antes de concluir a minha."],
+["h","Influenciar para cima"],
+["ul",["Traga dado, não sensação. Três reclamações escritas em dez dias pesa mais que o pessoal está estressado.","Traga opções, não problemas. Duas ou três, com trade-off explícito.","Ancore no interesse deles: retenção, custo de reposição, ticket médio, avaliação online.","Escolha o momento. Nunca no meio do serviço.","Registre por escrito o que for combinado verbalmente."]],
+["h","Comunicação operacional"],
+["ul",["Um canal por finalidade. Urgente é presencial ou telefone, nunca grupo de mensagem.","Escala publicada com antecedência fixa. Previsibilidade é benefício não financeiro.","Se muda o padrão, vira documento. Nada que só exista na cabeça de quem estava no turno."]]
+]},
+
+{id:"processo", n:"5", t:"Processo e organização", b:[
+["p","Serve para transformar equipe motivada em equipe organizada. Sem isto, o capítulo anterior vira discurso."],
+["h","Blueprint de serviço"],
+["t",["Faixa","Contém"],[["Ações do cliente","O que o hóspede faz."],["Palco","O que a equipe faz na frente dele."],["Bastidor","O que a equipe faz que ele não vê."],["Apoio","Cozinha, bar, sistema, fornecedor."]]],
+["p","Marque os pontos de falha e os pontos de espera. Esses dois são a agenda de melhoria do trimestre inteiro."],
+["h","Gargalo"],
+["p","A capacidade do salão é a da etapa mais lenta, não a soma das partes. Se o bar leva nove minutos por coquetel no pico, nenhum aumento de garçons melhora o serviço. Cronometre três serviços de pico e ache a fila."],
+["h","Duração da refeição"],
+["p","A duração é variável gerenciável, não fixa. As alavancas legítimas estão nos extremos do ciclo: reduzir o tempo até o primeiro contato, o tempo morto entre etapas, o fechamento da conta e a virada da mesa. O meio é a experiência, e não se toca."],
+["h","Padronização inteligente"],
+["p","Padronize o que é repetível e invisível: mise en place, sequência, limpeza, montagem. Deixe livre o que é relacional: tom, linguagem, humor, leitura de mesa. Padronizar o relacional produz robôs; não padronizar o repetível produz caos. A maioria dos restaurantes faz exatamente o inverso."],
+["h","Os três rituais"],
+["ol",["Briefing pré-serviço, dez a quinze minutos, todos os dias, sem exceção.","Ajuste de meio de serviço: trinta segundos com o líder de cada seção no vale entre picos.","Debriefing de cinco minutos no fechamento: o que funcionou, o que quebrou, o que mudamos amanhã. Com registro. Sem registro é desabafo."]],
+["h","Pauta fixa do briefing"],
+["ol",["Números do dia: reservas, mesas, eventos.","Novidades de menu e indisponibilidades.","Mesas especiais: VIP, aniversário, alergia, idioma.","Um ponto técnico de treinamento. Um só.","Uma história positiva do serviço anterior, com nome de quem fez.","Uma pergunta aberta à equipe."]]
+]},
+
+{id:"cambiamento", n:"6", t:"Mudança e melhoria", b:[
+["h","Por que mudanças falham em restaurante"],
+["p","Quase sempre pelo mesmo motivo: são anunciadas no briefing, aplicadas no mesmo dia e abandonadas na primeira sexta cheia. Mudança precisa de piloto, não de anúncio."],
+["h","Sequência em sete passos"],
+["ol",["Evidência: dado que mostra o problema — tempo, reclamação, erro, custo.","Coalizão: duas ou três pessoas da equipe convencidas antes do anúncio.","Desenho conjunto: quem executa participa do desenho.","Piloto pequeno: um turno, uma seção, duas semanas.","Medição definida antes do piloto, não depois.","Decisão explícita: adota, ajusta ou descarta, e comunica qual foi.","Institucionalização: vira documento e entra no onboarding."]],
+["h","Ficha de experimento"],
+["ul",["Hipótese: se fizermos X, então Y melhora.","Teste: onde, quando, por quanto tempo.","Métrica: o número que vamos olhar.","Resultado: o que aconteceu.","Decisão: adotar, ajustar ou descartar."]],
+["p","Um experimento por mês é ritmo suficiente. Doze por ano transformam uma operação."],
+["h","Agilidade não é velocidade"],
+["p","Agilidade é a capacidade de reconfigurar rápido diante do inesperado. Mede-se por uma pergunta: quando alguém falta ou o sistema cai, quantas pessoas conseguem cobrir? Se a resposta for só eu, você não tem equipe ágil, tem uma dependência. O antídoto é rotação planejada e formação cruzada, com pelo menos duas pessoas capazes por posição."]
+]},
+
+{id:"numeri", n:"7", t:"Os números do responsável", b:[
+["p","Liderança sem número não é levada a sério por proprietário nenhum. Três linhas do resultado que um responsável de sala precisa saber explicar: receita, custo de mercadoria e custo de mão de obra. E as duas relações: food cost e labor cost em percentual."],
+["h","Indicadores de sala"],
+["t",["Indicador","Como calcular","O que revela"],[["Ticket médio","Receita dividida pelo número de clientes.","Eficácia da venda sugestiva."],["RevPASH","Receita dividida por assentos vezes horas.","Eficiência real do salão."],["Rotação de mesa","Clientes divididos por assentos.","Uso da capacidade."],["Duração média","Tempo entre sentar e liberar.","Onde está o tempo morto."],["No-show","Não comparecimentos sobre reservas.","Qualidade da confirmação."],["Reclamações","Por cada cem mesas.","Qualidade percebida."]]],
+["h","Indicadores de equipe"],
+["ul",["Rotatividade e tempo médio de permanência.","Absenteísmo e atrasos.","Tempo até a autonomia de um novo contratado.","Sugestões da equipe adotadas por trimestre.","Resultado da autoavaliação das cinco dinâmicas, a cada seis meses."]],
+["h","Autoavaliação da equipe"],
+["p","Anônima, de 1 a 5. Média abaixo de 3,5 em qualquer item é prioridade do trimestre."],
+["ul",["Consigo admitir um erro aqui sem medo.","Consigo discordar de quem está acima de mim.","Posso contar com meus colegas para fazer a parte deles.","Sei exatamente o que se espera de mim.","Sei como as decisões são tomadas aqui.","O que eu faço tem sentido para mim.","Acredito que nosso trabalho faz diferença para o cliente."]]
+]},
+
+{id:"clefs", n:"8", t:"O padrão Les Clefs d'Or", b:[
+["p","Fundada em Paris em 1929, quando onze concierges dos principais hotéis decidiram trabalhar juntos em benefício dos hóspedes. Hoje reúne cerca de quatro mil membros em mais de oitenta países. O lema é In Service Through Friendship: cultivando amizade entre colegas da profissão, o membro serve melhor o próprio hóspede. A rede não é networking de carreira, é infraestrutura de serviço."],
+["h","O código de ética, traduzido para a sala"],
+["ol",["O padrão vale para todos: clientes, colegas, empregadores, subordinados e fornecedores, em qualquer circunstância. Quem trata bem o cliente e mal a lavagem não está no padrão.","Recomende só o que avaliou. Nunca com base no benefício de quem recomenda.","Transparência total de custo. Sem surpresa na conta.","Nunca denegrir um colega publicamente.","Cumprir o que prometeu e responder a todo pedido em tempo hábil.","Formar a equipe é dever ético. Deixar gente despreparada é falta, não apenas ineficiência.","Nada de comissão, concurso de incentivo ou vantagem pessoal de fornecedor.","Discrição: informação de hóspede e assunto interno não circulam, nem em conversa nem em rede social.","Agir sempre dentro da lei, sem tolerar prática ilegal."]],
+["n","A FRASE MAIS FORTE","Capacitar a equipe não é bônus de gestão. É obrigação profissional."],
+["h","A postura"],
+["ul",["O default é sim. A pergunta não é podemos, é como.","Quando não dá, dê a alternativa junto com a recusa. Nunca um não seco.","Aquilo que você não sabe, você descobre. E anota, para não descobrir duas vezes.","A rede resolve o que a casa não resolve."]],
+["h","O caderno da casa"],
+["p","Uma página no celular de todo mundo. Custa uma tarde para montar e muda a percepção do serviço inteiro."],
+["ul",["Horários reais do Duomo, das terrazze, da Galleria e do Cenacolo, que precisa de reserva com semanas de antecedência.","Farmácia aberta, hospital mais próximo, casa de câmbio.","Táxi confiável e como se chama um em Milão.","O que fazer com mala, com chuva, com criança, com cadeira de rodas.","Três bares para depois, três lojas, três coisas para ver a pé em trinta minutos.","Horário do último metrô."]],
+["p","E a rede: um contato nomeado no hotel vizinho, no táxi, na loja, no bar de depois. Não é favor, é reciprocidade. Você resolve para o hóspede deles, eles resolvem para o seu."]
+]}
+
+]};
+const L3 = {
+n:"III", t:"Il Terreno", s:"O que organizar antes, e como se portar", c:[
+
+{id:"settimana-zero", n:"1", t:"Semana zero", b:[
+["p","Para ser feito antes de assumir a função, ou nos primeiros dias. Nada aqui exige autorização de ninguém, exceto o primeiro bloco."],
+["c","1. Definir com a direção, antes de aceitar",["A quem me reporto no dia a dia — uma pessoa, nomeada","Remuneração, com o delta de gorjeta calculado","Enquadramento e nível atualizados em contrato, não só o título","Data de início e período de transição","Limite de autonomia por escrito: cortesia, remanejo, escala do dia, correção de conta","Composição da equipe: quem é do turno, quantos em sala, quem contrata","A meta traduzida em número: qual métrica, qual patamar, em quantos meses","Reunião fixa de acompanhamento, quinzenal, com pauta","Diagnóstico prévio: o que já foi tentado no turno e por que não funcionou","Confirmação por e-mail no mesmo dia"]],
+["c","2. Diagnosticar nos primeiros 30 dias, sem prometer nada",["Cronometrar três serviços de pico: primeiro contato, intervalos, virada de mesa","Identificar o gargalo real: bar, cozinha, caixa ou lavagem","Linha de base: ticket médio, rotação, duração, no-show, reclamações","Mapear o ciclo do hóspede e marcar os pontos de falha","Montar a matriz de cobertura por posição","Inventariar o que existe de documentado","Ouvir a cozinha e a lavagem separadamente"]],
+["c","3. Conversas individuais nas duas primeiras semanas",["Falar com todos, inclusive lavagem e caixa","Perguntar: o que precisa mudar aqui?","Perguntar: o que você espera de mim?","Perguntar: o que você faz bem que ninguém aproveita?","Anotar tudo e não prometer nada","Voltar em 30 dias mostrando o que foi feito com o que foi dito"]],
+["c","4. Instalar entre os dias 30 e 60",["Briefing pré-serviço diário, com pauta fixa","Debriefing de cinco minutos com registro escrito","Contrato de equipe escrito com o grupo","Sequência de serviço escrita, passo a passo","Protocolo de reclamação e de alergia","Caderno da casa no celular de todo mundo","Autoavaliação anônima das cinco dinâmicas","Primeiro ciclo de conversas individuais quinzenais em calendário"]],
+["c","5. Provar entre os dias 60 e 90",["Um experimento documentado, do desenho à decisão","Painel de indicadores comparado com a linha de base","Reapresentar à direção: o que mudou, o que falta, o que precisa de recurso"]],
+["n","A ORDEM IMPORTA","Diagnosticar e escutar vêm antes de mudar. Trinta dias medindo parecem lentos, mas é o que faz a mudança do dia quarenta ser recebida como resposta ao que a equipe disse, e não como mais alguém novo chegando com ideias próprias."]
+]},
+
+{id:"contegno", n:"2", t:"Protocolo de comportamento", b:[
+["h","Com a equipe que você herda"],
+["ul",["Escute antes de mudar. Trinta dias sem alterar nada estrutural.","Não comente o seu antecessor. Nem concordando. A resposta padrão é sempre: isso é assunto da direção.","Corrija sempre em privado. Elogie com nome e em público.","Assuma o erro primeiro, em voz alta, no briefing.","Feche o loop em toda sugestão.","Trate lavagem, caixa e cozinha exatamente como trata o cliente.","Justiça visível: escala com antecedência fixa, seções com critério explicado, gorjeta com regra transparente."]],
+["h","Com quem pediu para você vir"],
+["ul",["Descubra o que cada um espera especificamente.","Diga cedo o que não vai conseguir entregar. Dia dez, não dia noventa.","Não crie dependência de você. Quem só funciona com você na sala não é equipe."]],
+["h","Com a direção"],
+["ul",["Dado, não sensação. Sempre comparado com a linha de base.","Opções, não problemas.","Ancore no interesse deles.","Nunca no meio do serviço.","Registre por escrito o que for combinado verbalmente.","Diga que não é possível antes, não depois. Antes é competência, depois é desculpa."]],
+["h","Com dois superiores no mesmo turno"],
+["ul",["Resolva a ambiguidade antes de começar, não quando ela custar caro.","Nunca leve o mesmo assunto aos dois separadamente.","Se receber instruções conflitantes, junte os dois. Não escolha um."]],
+["h","Com um colega deslocado da função"],
+["ul",["Não busque a conversa. Se ela vier: fora do serviço, lugar visível, nunca isolado.","Assunto único: como vocês trabalham daqui pra frente.","Não confirme, não negue, não antecipe decisão que não é sua.","Uma frase de reconhecimento sincera, se couber.","Se o tom escalar: assim não dá, a gente para por aqui. E sai.","Generoso na forma, firme no conteúdo."]],
+["h","Com você mesmo"],
+["ul",["Um horizonte por vez: rituais no primeiro trimestre, pessoas no segundo, número no terceiro.","Toda pergunta respondida duas vezes vira documento.","Bloqueie tempo fora do serviço.","Nenhuma posição com menos de duas pessoas capazes. Inclusive a sua."]]
+]},
+
+{id:"dodici", n:"3", t:"Doze semanas", b:[
+["p","Uma unidade por semana. Cada uma: leitura, aplicação prática e um entregável."],
+["t",["Semana","Foco","Entregável"],[["1","Definir o produto de serviço","Credo, três passos e promessa à equipe"],["2","Ciclo do hóspede e recuperação","Mapa do ciclo com dono por etapa"],["3","Fontes de poder","Autodiagnóstico escrito"],["4","Escuta e tempo","Três interrupções recorrentes viradas em padrão"],["5","As cinco condições","Diagnóstico das cinco condições na sua equipe"],["6","Segurança psicológica","Autoavaliação anônima do time"],["7","Contrato de equipe","Contrato escrito com a equipe"],["8","Contratação e integração","Roteiro de entrevista e plano de 30, 60 e 90 dias"],["9","Feedback e coaching","Primeiro ciclo de conversas individuais"],["10","Conflito e influência","Matriz de comunicação e uma mediação conduzida"],["11","Processo e rituais","Blueprint, briefing e debriefing rodando"],["12","Mudança e medição","Um experimento e o painel de indicadores"]]],
+["n","CRITÉRIO DE CONCLUSÃO","Os doze entregáveis existem em papel, foram vistos pela equipe, e três deles já mudaram alguma coisa na operação."]
+]},
+
+{id:"fonti", n:"4", t:"Fontes", b:[
+["h","Hospitalidade e serviço"],
+["ul",["Cornell, Nolan School of Hotel Administration: HADM 2351 Restaurant Management, 2365 Foodservice Management, 2810 Human Resources, 3010 Service Operations Management, 3170 Hotel Leadership Development Program.","eCornell, certificados Hospitality Management, Management 360 e Hospitality Leadership: SHA099, SHA604, SHA601, SHA705, SHA708, LSM598, SHA782, SHA783, SHA784, SHA739.","eCornell, Service Excellence: modelo PERC — poise, empathy, resourcefulness, caring.","EHL Hospitality Business School: módulo Leadership and Organizational Behavior; Service Excellence; formação de equipe de hotel.","Les Roches, Sommet Education: estrutura modular do Executive MBA in Global Hospitality Management."]],
+["h","Liderança e equipe"],
+["ul",["eCornell, Leadership Essentials: HAME501, HAME502, ILRME502, ILRME503, ILRME504, ILRME505, SHA781.","eCornell, Performance Leadership: LSM584, LSM596, ILR501, LSM594, LSM587, LSM591, LSM597.","J. Richard Hackman, Leading Teams, Harvard Business School Press, 2002: as cinco condições habilitadoras.","Google re:Work, Project Aristotle: as cinco dinâmicas de equipes eficazes.","Amy Edmondson: segurança psicológica.","Cornell ILR School e Scheinman Institute: diagnóstico e resolução de conflito no trabalho."]],
+["h","Prática de indústria"],
+["ul",["The Ritz-Carlton Gold Standards: credo, três passos de serviço, promessa ao funcionário e line-up diário.","Les Clefs d'Or, UICH: código de ética, lema In Service Through Friendship, requisitos de admissão.","CIPD e Acas: boas práticas de gestão de conflito e procedimento disciplinar."]],
+["n","AVISO","CIPD e Acas são boas práticas de gestão, não orientação jurídica aplicável automaticamente na Itália. Qualquer medida disciplinar deve seguir as políticas da empresa, o contrato, o CCNL e a orientação da direção."]
+]}
+
+]};
+
+const LIBRI=[L1,L2,L3];
+</script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const CAP=[];
+LIBRI.forEach(l=>l.c.forEach(c=>CAP.push({...c,libro:l})));
+const fatti=new Set();
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ---------- índice ---------- */
+$("#indice-c").innerHTML=LIBRI.map(l=>
+  '<div class="indice__libro">'+l.t+'</div>'+
+  l.c.map(c=>'<a href="#'+c.id+'"><i>'+l.n+'.'+c.n+'</i>'+esc(c.t)+'</a>').join("")
+).join("")+'<div class="indice__libro">&nbsp;</div><a href="#inizio"><i></i>Frontispício</a>';
+
+/* ---------- blocos ---------- */
+function bloco(b,ci){
+  const [t]=b;
+  if(t==="p")  return "<p>"+esc(b[1])+"</p>";
+  if(t==="h")  return "<h3>"+esc(b[1])+"</h3>";
+  if(t==="ul") return '<ul class="lista">'+b[1].map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+  if(t==="ol") return '<ol class="lista">'+b[1].map(x=>"<li>"+esc(x)+"</li>").join("")+"</ol>";
+  if(t==="n")  return '<div class="nota"><div class="nota__t">'+esc(b[1])+'</div><p>'+esc(b[2])+"</p></div>";
+  if(t==="r")  return '<div class="nota rossa"><div class="nota__t">'+esc(b[1])+'</div><p>'+esc(b[2])+"</p></div>";
+  if(t==="e")  return b[1].map(r=>'<div class="coppia"><div class="no">'+esc(r[0])+'</div><div class="si">'+esc(r[1])+"</div></div>").join("");
+  if(t==="t"){
+    const cols=b[1],cl=cols.length===3?"c3":"c2";
+    let h='<div class="tab"><div class="riga '+cl+'">'+cols.map(c=>'<div class="h">'+esc(c)+"</div>").join("")+"</div>";
+    h+=b[2].map(r=>'<div class="riga '+cl+'"><div class="k">'+esc(r[0])+"</div>"+r.slice(1).map(v=>'<div class="v">'+esc(v)+"</div>").join("")+"</div>").join("");
+    return h+"</div>";
+  }
+  if(t==="c"){
+    const key=ci+"|"+b[1];
+    let h='<div class="check" data-k="'+esc(key)+'"><div class="check__t">'+esc(b[1])+"</div>";
+    h+=b[2].map((x,i)=>{
+      const id=key+"|"+i, on=fatti.has(id);
+      return '<button class="ck'+(on?" fatto":"")+'" data-id="'+esc(id)+'" aria-pressed="'+on+'"><span class="ck__q"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span class="ck__l">'+esc(x)+"</span></button>";
+    }).join("");
+    return h+'<button class="azzera" data-azzera="'+esc(key)+'">Limpar esta lista</button></div>';
+  }
+  return "";
+}
+
+/* ---------- render ---------- */
+function frontespizio(){
+  return '<section class="front">'+
+    '<div class="front__casa">TERRAZZA DUOMO 21 &nbsp;·&nbsp; MILANO</div>'+
+    '<h1 class="front__t">La<em>Bibbia</em></h1>'+
+    '<div class="front__r"></div>'+
+    '<p class="front__p">O cliente não deve sentir o esforço, a confusão ou o conflito dos bastidores. Deve sentir presença, clareza, ritmo e cuidado.</p>'+
+    '<div class="front__meta">MANUAL DA SALA &nbsp;·&nbsp; VERSÃO 3.0</div>'+
+    '<div class="front__giu">'+LIBRI.map(l=>l.n+". "+l.t).join("&nbsp; &nbsp;")+'</div>'+
+  "</section>";
+}
+
+function mostra(id){
+  const lettura=$("#lettura");
+  if(!id||id==="inizio"){
+    lettura.innerHTML=frontespizio();
+    $("#dove").innerHTML="<b>La Bibbia</b>";
+  }else{
+    const i=CAP.findIndex(c=>c.id===id);
+    if(i<0){location.hash="#inizio";return;}
+    const c=CAP[i],p=CAP[i-1],n=CAP[i+1];
+    let h='<p class="cap__n">LIBRO '+c.libro.n+" &nbsp;·&nbsp; CAPITOLO "+c.n+'</p><h2 class="cap__t">'+esc(c.t)+'</h2><div class="cap__r"></div>';
+    h+=c.b.map(b=>bloco(b,c.id)).join("");
+    h+='<nav class="piede">';
+    if(p) h+='<a href="#'+p.id+'"><span>ANTERIOR</span>'+esc(p.t)+"</a>";
+    if(n) h+='<a class="fine" href="#'+n.id+'"><span>SEGUINTE</span>'+esc(n.t)+"</a>";
+    h+="</nav>";
+    lettura.innerHTML=h;
+    $("#dove").innerHTML="<b>"+c.libro.n+"."+c.n+"</b> &nbsp;"+esc(c.t);
+  }
+  document.querySelectorAll("#indice a").forEach(a=>a.classList.toggle("qui",a.getAttribute("href")==="#"+(id||"inizio")));
+  window.scrollTo(0,0);
+  chiudi();
+}
+
+/* ---------- índice abre/fecha ---------- */
+function apri(){$("#indice").classList.add("on");$("#velo").classList.add("on")}
+function chiudi(){$("#indice").classList.remove("on");$("#velo").classList.remove("on")}
+$("#apri").onclick=()=>$("#indice").classList.contains("on")?chiudi():apri();
+$("#velo").onclick=chiudi;
+
+/* ---------- checklist ---------- */
+document.addEventListener("click",e=>{
+  const ck=e.target.closest(".ck");
+  if(ck){
+    const id=ck.dataset.id;
+    if(fatti.has(id)){fatti.delete(id);ck.classList.remove("fatto");ck.setAttribute("aria-pressed","false")}
+    else{fatti.add(id);ck.classList.add("fatto");ck.setAttribute("aria-pressed","true")}
+    return;
+  }
+  const az=e.target.closest("[data-azzera]");
+  if(az){
+    const k=az.dataset.azzera;
+    [...fatti].forEach(x=>{if(x.indexOf(k+"|")===0)fatti.delete(x)});
+    az.closest(".check").querySelectorAll(".ck").forEach(b=>{b.classList.remove("fatto");b.setAttribute("aria-pressed","false")});
+  }
+});
+
+/* ---------- busca ---------- */
+const testo=b=>{
+  const [t]=b;
+  if(t==="p"||t==="h") return b[1];
+  if(t==="ul"||t==="ol") return b[1].join(" · ");
+  if(t==="n"||t==="r") return b[1]+" — "+b[2];
+  if(t==="e") return b[1].map(r=>r.join(" → ")).join(" · ");
+  if(t==="t") return b[2].map(r=>r.join(" — ")).join(" · ");
+  if(t==="c") return b[1]+" — "+b[2].join(" · ");
+  return "";
+};
+const INDICE=[];
+CAP.forEach(c=>c.b.forEach(b=>{const s=testo(b);if(s)INDICE.push({id:c.id,rif:c.libro.n+"."+c.n+"  "+c.t,s})}));
+
+$("#cerca-b").onclick=()=>{$("#ricerca").classList.add("on");$("#q").focus()};
+$("#chiudi-c").onclick=()=>$("#ricerca").classList.remove("on");
+$("#q").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase();
+  const out=$("#esiti");
+  if(q.length<2){out.innerHTML='<div class="vuoto">Escreva ao menos duas letras.</div>';return}
+  const r=INDICE.filter(x=>x.s.toLowerCase().includes(q)).slice(0,60);
+  if(!r.length){out.innerHTML='<div class="vuoto">Nada encontrado.</div>';return}
+  out.innerHTML=r.map(x=>{
+    const i=x.s.toLowerCase().indexOf(q);
+    const a=Math.max(0,i-55), frag=(a>0?"…":"")+x.s.slice(a,i)+"<mark>"+esc(x.s.substr(i,q.length))+"</mark>"+x.s.slice(i+q.length,i+q.length+110)+"…";
+    return '<a class="esito" href="#'+x.id+'" data-chiudi><b>'+esc(x.rif)+"</b><span>"+frag+"</span></a>";
+  }).join("");
+});
+$("#esiti").addEventListener("click",e=>{if(e.target.closest("[data-chiudi]"))$("#ricerca").classList.remove("on")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#ricerca").classList.remove("on");chiudi()}});
+
+window.addEventListener("hashchange",()=>mostra(location.hash.slice(1)));
+mostra(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
